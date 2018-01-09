@@ -37,7 +37,7 @@ app.get('/posts/:id', (req, res) => {
 });
 
 app.post('/posts', (req, res) => {
-  const requiredFields = ['title', 'content', 'author'];
+  const requiredFields = ['title', 'content', 'firstName','lastName'];
   for (let i = 0; i < requiredFields.length; i++) {
     const field = requiredFields[i];
     if (!(field in req.body)) {
@@ -49,9 +49,10 @@ app.post('/posts', (req, res) => {
 
   BlogPost
     .create({
-      title: req.body.title,
-      content: req.body.content,
-      author: {firstName:req.body.firstName,lastName:req.body.lastName}
+    title: req.body.title,
+    content: req.body.content,
+    author: {firstName:req.body.firstName,lastName:req.body.lastName},
+    created: req.body.created
     })
     .then(blogPost => res.status(201).json(blogPost.serialize()))
     .catch(err => {

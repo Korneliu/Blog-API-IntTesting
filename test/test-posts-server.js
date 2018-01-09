@@ -89,8 +89,6 @@ describe('BlogPost API resource', function() {
         });
     });
     it('should return BlogPosts with right fields', function() {
-      // Strategy: Get back all restaurants, and ensure they have expected keys
-
       let resPost;
       return chai.request(app)
         .get('/posts')
@@ -109,7 +107,8 @@ describe('BlogPost API resource', function() {
         })
         .then(posts => {
           resPost.title.should.equal(posts.title);
-          resPost.content.should.equal(posts.content);
+          resPost.content.should.equal(posts.content); 
+          resPost.author.should.equal(posts.authorName);
         });
     });
   });
@@ -124,19 +123,69 @@ describe('BlogPost API resource', function() {
           res.should.be.json;
           res.body.should.be.a('object');
           res.body.should.include.keys(
-            'id', 'author','title', 'content','created');
+            'id', 'firstName','lastName','title', 'content','created');
           res.body.id.should.not.be.null;
-          res.body.author.should.equal(newPosts.author);
+          res.body.firstName.should.equal(newPosts.firstName);
+          res.body.lastName.should.equal(newPosts.lastName);
           res.body.title.should.equal(newPosts.title);
           res.body.content.should.equal(newPosts.content);
           res.body.created.should.equal(newPosts.created);
           return BlogPost.findById(res.body.id);
         })
         .then(function(posts) {
-          BlogPost.author.should.equal(newPosts.author);
+          BlogPost.author.firstName.should.equal(`${newPosts.author.firstName}`);
+          BlogPost.author.lastName.should.equal(`${newPosts.author.lastName}`);
           BlogPost.title.should.equal(newPosts.title);
           BlogPost.content.should.equal(newPosts.content);
           BlogPost.created.should.equal(newPosts.created); 
+        });
+    });
+  });
+ describe('PUT endpoint', function() {
+    it('should update fields you send over', function() {
+      const updateData = {
+        author: {firstName: 'Umberto',
+                 lastName: 'Eco'
+                },
+        title: 'The Name of the Rose',
+        content: 'Long time ago...'
+      };
+
+      return BlogPost
+        .findOne()
+        .then(function(posts) {
+          updateData.id = posts.id;
+          return chai.request(app)
+            .put(`/posts/${posts.id}`)
+            .send(updateData);
+        })
+        .then(function(res) {
+          res.should.have.status(204);
+          return BlogPost.findById(updateData.id);
+        })
+        .then(function( posts) {
+          posts.author.firstName.should.equal(updateData.author.firstName);
+          posts.author.lastName.should.equal(updateData.author.lastName);
+          posts.title.should.equal(updateData.title);
+          posts.content.should.equal(updateData.content);
+        });
+    });
+  });
+ describe('DELETE endpoint', function() {
+    it('delete a post by id', function() {
+      let post;
+      return BlogPost
+        .findOne()
+        .then(function(_post) {
+          post = _post;
+          return chai.request(app).delete(`/posts/${post.id}`);
+        })
+        .then(function(res) {
+          res.should.have.status(204);
+          return BlogPost.findById(post.id);
+        })
+        .then(function(_post) {
+          should.not.exist(_post);
         });
     });
   });
