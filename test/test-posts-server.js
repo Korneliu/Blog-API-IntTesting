@@ -46,7 +46,6 @@ function generateBlogPostData() {
     author: {firstName:generateAuthorFirstName(),lastName:generateAuthorLastName()},
     title: generateTitle(),
     content: generateContent(),
-    created: ""
   };
 }
 
@@ -115,6 +114,8 @@ describe('BlogPost API resource', function() {
  describe('POST endpoint', function() {
     it('should add a new post', function() {
       const newPosts = generateBlogPostData();
+      console.log(newPosts);
+      Object.assign(newPosts,newPosts.author)
       return chai.request(app)
         .post('/posts')
         .send(newPosts)
@@ -123,21 +124,18 @@ describe('BlogPost API resource', function() {
           res.should.be.json;
           res.body.should.be.a('object');
           res.body.should.include.keys(
-            'id', 'firstName','lastName','title', 'content','created');
+            'id', 'author','title', 'content','created');
           res.body.id.should.not.be.null;
-          res.body.firstName.should.equal(newPosts.firstName);
-          res.body.lastName.should.equal(newPosts.lastName);
+          res.body.author.should.equal(newPosts.firstName+' '+newPosts.lastName);
           res.body.title.should.equal(newPosts.title);
           res.body.content.should.equal(newPosts.content);
-          res.body.created.should.equal(newPosts.created);
           return BlogPost.findById(res.body.id);
         })
-        .then(function(posts) {
-          BlogPost.author.firstName.should.equal(`${newPosts.author.firstName}`);
-          BlogPost.author.lastName.should.equal(`${newPosts.author.lastName}`);
-          BlogPost.title.should.equal(newPosts.title);
-          BlogPost.content.should.equal(newPosts.content);
-          BlogPost.created.should.equal(newPosts.created); 
+        .then(function(post) {
+          post.author.firstName.should.equal(`${newPosts.author.firstName}`);
+          post.author.lastName.should.equal(`${newPosts.author.lastName}`);
+          post.title.should.equal(newPosts.title);
+          post.content.should.equal(newPosts.content);
         });
     });
   });
@@ -172,23 +170,22 @@ describe('BlogPost API resource', function() {
     });
   });
  describe('DELETE endpoint', function() {
-    it('delete a post by id', function() {
+    it('delete post by id', function() {
       let post;
       return BlogPost
         .findOne()
-        .then(function(_post) {
-          post = _post;
+        .then(function(responsePost) {
+          post = responsePost;
           return chai.request(app).delete(`/posts/${post.id}`);
         })
         .then(function(res) {
           res.should.have.status(204);
           return BlogPost.findById(post.id);
         })
-        .then(function(_post) {
-          should.not.exist(_post);
+        .then(function(anotherPost) {
+          should.not.exist(anotherPost);
         });
     });
   });
-
 });
  
