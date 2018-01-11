@@ -2,3 +2,10 @@ language: node_js
 node_js: node
 services:
 - mongodb
+deploy:
+  provider: heroku
+  api_key:
+    secure: f+fV1IosjCpyH439b289YPNugjiChND2fSchWIgAQcTCE3tehcIim12tr8WQS4NyQJhSJ7wEQ7kCoOcF3GvRHABweXNv6qVilPh0v+wssr2rYyDPEzyk/F9aCXdkD8aNxJErtTAGdSqyeKlifTI7qMsAbKPE6kYJQ+gX414oThHs4pHtpwt8Mv2Cc/isMtA3o3Q7CG7GfqG4/Bu1z0gsanuIviT/uBAd71G3NDi/in0NbQiP4p8tVdgM5/kLaMLNv4R34QUmVZOX+lTXGAlqx3ucHTUKz/FbaRh5wOTFBYK8UwH7Nwj7KI9pxosdruThgGIFaL8vOAKZPuxTS1TPQrCzeOtxXCUh4Isf27RvmOKuT3qFCFPsJtC3yT8wiy916SygdqR5a2QktqIVZtJyLyqEBtBqsYIG0m+rxZ3KQE/SEWbMRJ4/oxLD0ZooYrBtTdqpPS6W+esDxBRFe48VRcYbwNRaABM2TxRckE6Ux+Lep+7U0EE6pSfzHw/9XicDXbRqsaF4sNRLPQoIqzsgO/19dg9M9d+zY5Cz9uCnprId2+xtotR5hdGiuwL1IQde/BqpBavL5mVe8ksM4ctBwsWb/3RdfQ6SWV9CVfY5LqpYTaVaP73oMV0tHZ99EkNMXj/o1hIWu/rx+gNut24jt/9f+P3Zg4QO5A6zbTwgjoQ=
+  app: blog1-inttesting
+  on:
+    repo: Korneliu/Blog-API-IntTesting
